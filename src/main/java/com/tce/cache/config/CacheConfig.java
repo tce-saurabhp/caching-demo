@@ -3,8 +3,8 @@ package com.tce.cache.config;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheEventListenerConfigurationBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
 import org.ehcache.core.config.DefaultConfiguration;
 import org.ehcache.event.EventType;
@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.cache.Caching;
 import java.io.File;
+import java.time.Duration;
 import java.util.Map;
 
 
@@ -40,10 +41,11 @@ public class CacheConfig {
         var config = CacheConfigurationBuilder.newCacheConfigurationBuilder(
                         String.class, String.class,
                         ResourcePoolsBuilder.newResourcePoolsBuilder()
-                                .heap(500, EntryUnit.ENTRIES)
-                                .offheap(1, MemoryUnit.GB)
-                                .disk(3, MemoryUnit.GB, true)
+                                .heap(500, MemoryUnit.KB)
+                                .offheap(50, MemoryUnit.MB)
+                                .disk(50, MemoryUnit.MB, true)
                 )
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofHours(4)))
                 .withService(cacheEventListenerConfiguration)
                 .build();
 
